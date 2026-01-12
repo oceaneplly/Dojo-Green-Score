@@ -1,4 +1,0 @@
-com\greenapi\baseline\BaselineApplication.class
-com\greenapi\baseline\domain\Book.class
-com\greenapi\baseline\api\BookController.class
-com\greenapi\baseline\repo\BookRepository.class

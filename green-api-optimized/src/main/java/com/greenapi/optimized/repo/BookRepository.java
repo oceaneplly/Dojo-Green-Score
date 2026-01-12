@@ -1,6 +1,8 @@
 package com.greenapi.optimized.repo;
 
 import com.greenapi.optimized.domain.Book;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -10,10 +12,12 @@ import java.util.stream.LongStream;
 @Repository
 public class BookRepository {
     private final List<Book> data;
+    private final long bookNumber;
 
-    public BookRepository() {
-        data = new ArrayList<>();
-        LongStream.rangeClosed(1, 500000).forEach(i ->
+    public BookRepository(@Value("${BOOK_NUMBER}") long bookNumber) {
+        this.bookNumber = bookNumber;
+        this.data = new ArrayList<>();
+        LongStream.rangeClosed(1, bookNumber).forEach(i ->
                 data.add(new Book(
                         i,
                         "Title " + i,
@@ -27,4 +31,5 @@ public class BookRepository {
 
     public List<Book> findAll() { return data; }
     public Book findById(long id) { return data.stream().filter(b -> b.id()==id).findFirst().orElse(null); }
+    public long getBookNumber() { return bookNumber; }
 }

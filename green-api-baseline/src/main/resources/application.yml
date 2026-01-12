@@ -5,3 +5,5 @@ management:
     web:
       exposure:
         include: health
+
+BOOK_NUMBER: 500000

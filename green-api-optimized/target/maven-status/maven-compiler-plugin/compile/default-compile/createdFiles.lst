@@ -1,4 +1,0 @@
-com\greenapi\optimized\domain\Book.class
-com\greenapi\optimized\api\BookController.class
-com\greenapi\optimized\OptimizedApplication.class
-com\greenapi\optimized\repo\BookRepository.class

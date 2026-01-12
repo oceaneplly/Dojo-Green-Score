@@ -1,7 +1,4 @@
-C:\Users\B099RX\Downloads\green-api-workshop-final\green-api-optimized\src\main\java\com\example\optimized\api\BookController.java
-C:\Users\B099RX\Downloads\green-api-workshop-final\green-api-optimized\src\main\java\com\example\optimized\observability\PayloadLoggingFilter.java
-C:\Users\B099RX\Downloads\green-api-workshop-final\green-api-optimized\src\main\java\com\example\optimized\OptimizedApplication.java
-C:\Users\B099RX\Downloads\green-api-workshop-final\green-api-optimized\src\main\java\com\example\optimized\web\RateLimitFilter.java
-C:\Users\B099RX\Downloads\green-api-workshop-final\green-api-optimized\src\main\java\com\example\optimized\repo\BookRepository.java
-C:\Users\B099RX\Downloads\green-api-workshop-final\green-api-optimized\src\main\java\com\example\optimized\config\WebConfig.java
-C:\Users\B099RX\Downloads\green-api-workshop-final\green-api-optimized\src\main\java\com\example\optimized\domain\Book.java
+C:\Users\ocean\Documents\Projects\Dojo-Green-Score\green-api-optimized\src\main\java\com\greenapi\optimized\api\BookController.java
+C:\Users\ocean\Documents\Projects\Dojo-Green-Score\green-api-optimized\src\main\java\com\greenapi\optimized\domain\Book.java
+C:\Users\ocean\Documents\Projects\Dojo-Green-Score\green-api-optimized\src\main\java\com\greenapi\optimized\OptimizedApplication.java
+C:\Users\ocean\Documents\Projects\Dojo-Green-Score\green-api-optimized\src\main\java\com\greenapi\optimized\repo\BookRepository.java

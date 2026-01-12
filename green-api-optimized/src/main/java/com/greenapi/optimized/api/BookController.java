@@ -4,9 +4,7 @@ import com.greenapi.optimized.domain.Book;
 import com.greenapi.optimized.repo.BookRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-
-import static com.greenapi.optimized.api.BookReactiveController.getBookResponseEntity;
+import java.util.List;
 
 @RestController
 @RequestMapping("/books")

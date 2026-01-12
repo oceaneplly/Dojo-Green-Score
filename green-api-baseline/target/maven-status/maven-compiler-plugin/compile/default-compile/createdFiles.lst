@@ -1,4 +1,4 @@
-com\example\baseline\domain\Book.class
-com\example\baseline\repo\BookRepository.class
-com\example\baseline\BaselineApplication.class
-com\example\baseline\api\BookController.class
+com\greenapi\baseline\BaselineApplication.class
+com\greenapi\baseline\domain\Book.class
+com\greenapi\baseline\api\BookController.class
+com\greenapi\baseline\repo\BookRepository.class

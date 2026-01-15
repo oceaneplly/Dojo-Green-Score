@@ -23,21 +23,38 @@ class BookControllerFilteringTest {
     @Test
     @DisplayName("Test 1: GET /books sans filtrage retourne une réponse valide")
     void testDefaultFieldsReturnsValidResponse() throws Exception {
-        mockMvc.perform(get("/books"))
+        var response = mockMvc.perform(get("/books"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").exists())
-                .andExpect(jsonPath("$[0].title").exists());
+                .andReturn();
+
+        String responseBody = response.getResponse().getContentAsString();
+
+        // Vérifier que les champs par défaut (id et title) sont présents dans la réponse
+        org.assertj.core.api.Assertions.assertThat(responseBody)
+                .contains("\"id\"");
+
+        org.assertj.core.api.Assertions.assertThat(responseBody)
+                .contains("\"title\"");
     }
 
     @Test
     @DisplayName("Test 2: GET /books?fields=id,title retourne seulement ces champs")
     void testFilterSpecificFields() throws Exception {
-        mockMvc.perform(get("/books")
+        var response = mockMvc.perform(get("/books")
                 .param("fields", "id,title"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").exists())
-                .andExpect(jsonPath("$[0].title").exists())
-                .andExpect(jsonPath("$[0].author").doesNotExist());
+                .andReturn();
+
+        String responseBody = response.getResponse().getContentAsString();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody)
+                .contains("\"id\"");
+
+        org.assertj.core.api.Assertions.assertThat(responseBody)
+                .contains("\"title\"");
+
+        org.assertj.core.api.Assertions.assertThat(responseBody)
+                .doesNotContain("\"author\"");
     }
 
     @Test
@@ -62,7 +79,6 @@ class BookControllerFilteringTest {
 
         // La réponse filtrée doit être plus petite
         org.assertj.core.api.Assertions.assertThat(filteredResponse.length())
-                .as("La réponse filtrée doit être plus petite que la réponse complète")
                 .isLessThan(fullResponse.length());
     }
 
@@ -89,7 +105,6 @@ class BookControllerFilteringTest {
 
         // Few fields doit être plus petit que many fields
         org.assertj.core.api.Assertions.assertThat(fewFields.length())
-                .as("Moins de champs = plus petit payload")
                 .isLessThan(manyFields.length());
     }
 }

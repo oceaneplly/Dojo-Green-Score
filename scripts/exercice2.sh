@@ -13,7 +13,6 @@ echo ""
 PAGE=${1:-0}
 SIZE=${2:-20}
 FIELDS=${3:-""}
-APERCU_TAILLE=2000
 
 # Variables
 if [ -z "$FIELDS" ]; then
@@ -69,9 +68,9 @@ echo " Taille réponse   : $size_response bytes ($size_kb KB)"
 echo ""
 
 # Affichage d'un aperçu de la réponse
-echo " Aperçu de la réponse :"
+echo " Réponse :"
 echo "───────────────────────────────────────"
-echo "$response_body" | head -c $APERCU_TAILLE
+echo "$response_body"
 echo "..."
 echo ""
 

@@ -34,7 +34,6 @@ class BookControllerPaginationTest {
 
         // Si la pagination fonctionne, la réponse doit être petite
         org.assertj.core.api.Assertions.assertThat(responseSize)
-                .as("La réponse paginée doit être < 100KB (pagination active)")
                 .isLessThan(100_000);
     }
 

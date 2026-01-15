@@ -6,7 +6,7 @@
 
 Actuellement, l'endpoint `GET /books` retourne **tous les champs** de chaque livre. Cela peut être problématique si :
 - Les champs contiennent des données volumineuses (résumé long, contenu, images)
-- Le client n'a besoin que de quelques informations (id, title)
+- Le client n'a besoin que de quelques informations (id, title, author)
 - Les données transférées deviennent massives sans raison
 
 Votre mission : **Implémenter le filtrage des champs** pour permettre au client de demander uniquement les données dont il a besoin.
@@ -63,7 +63,7 @@ cd scripts # si vous n'êtes pas déjà dans ce dossier
 bash exercice2.sh
 ```
 
-Comparez la taille avec une requête sans filtrage.
+Comparez la taille avec une requête sans filtrage (`basicCase.sh`) pour voir les améliorations.
 
 ---
 
@@ -72,12 +72,13 @@ Comparez la taille avec une requête sans filtrage.
 Avant de dire que vous avez terminé, vérifiez :
 
 - [ ] L'endpoint `/books` accepte un paramètre optionnel `fields`
-- [ ] Sans paramètre, les champs par défaut sont retournés (id, title)
 - [ ] Avec le paramètre `fields`, seuls les champs demandés sont retournés
 - [ ] Les champs sensibles/lourds sont exclus par défaut
 - [ ] La taille du payload est réduite comparée à la baseline 
 - [ ] Les champs invalides sont rejetés ou ignorés gracieusement
 - [ ] Les tests unitaires passent sans erreur
+- [ ] Le script `exercice2.sh` passe sans erreur et retour une liste avec des champs filtrés
+
 
 ---
 

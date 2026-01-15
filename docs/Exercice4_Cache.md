@@ -4,12 +4,12 @@
 
 ## 📚 Contexte
 
-Actuellement, l'endpoint `GET /books` de l'API optimisée retourne **toujours** les données complètes, même si le contenu n'a pas changé depuis la dernière requête. Cela peut être problématique si :
-- Le client effectue plusieurs requêtes identiques
-- Les données n'ont pas changé entre deux requêtes
-- Le réseau et le serveur consomment de l'énergie pour retransmettre les mêmes données
+Actuellement, l'API optimisée ne possède **pas d'endpoint pour récupérer un livre spécifique par son ID**. De plus, même si cet endpoint existait, il retournerait **toujours l'intégralité des données** d'un livre, même si le client l'a déjà en cache et que les données n'ont pas changé. Cela peut être problématique si :
+- Le client demande plusieurs fois la même ressource
+- Les données transférées sont inutiles car identiques à celles en cache
+- La bande passante est consommée sans raison
 
-Votre mission : **Implémenter le HTTP Cache avec ETag** pour éviter les retransmissions inutiles de contenu inchangé.
+Votre mission : **Créer l'endpoint `GET /books/{id}` et implémenter le mécanisme de cache HTTP avec ETags** pour éviter de retransférer des données non modifiées.
 
 ---
 
@@ -18,32 +18,39 @@ Votre mission : **Implémenter le HTTP Cache avec ETag** pour éviter les retran
 ### ❓ Questions de réflexion
 
 1. **Qu'est-ce qu'un ETag ?**
-   - Un "Entity Tag" est un identifiant unique représentant l'état d'une ressource
-   - Il change uniquement si le contenu de la ressource change
-   - Permet au serveur et au client de vérifier si une ressource a été modifiée
+   - Un identifiant unique généré par le serveur pour représenter l'état d'une ressource
+   - Permet au client de vérifier si sa version en cache est toujours valide
 
-2. **Comment fonctionne le mécanisme ETag/304 ?**
-   - **1ère requête** : Le serveur retourne les données avec un ETag (ex: `ETag: "abc123"`)
-   - **Client** : Stocke le contenu et l'ETag
-   - **2ème requête** : Le client envoie `If-None-Match: "abc123"`
-   - **Serveur** : Compare l'ETag. Si identique → retourne **304 Not Modified** (sans données)
-
-3. **Quel est l'impact ?**
-   - Réduction drastique du trafic réseau (304 = quelques dizaines d'octets au lieu de plusieurs KB/MB)
-   - Moins de charge serveur (pas besoin de retraiter les données)
-   - Meilleure expérience utilisateur (réponse quasi-instantanée)
+2. **Comment fonctionne le mécanisme HTTP Cache ?**
+   - **1ère requête** : Le serveur retourne **200 OK** avec les données et un header **ETag**
+   - **Requêtes suivantes** : Le client envoie le header **If-None-Match** avec l'ETag
+   - Si l'ETag correspond → Le serveur retourne **304 Not Modified** (pas de body)
+   - Si l'ETag ne correspond pas → Le serveur retourne **200 OK** avec les nouvelles données
 
 ---
 
-## 🛠️ Étape 2 : Implémenter le HTTP Cache
+## 🛠️ Étape 2 : Implémenter le cache HTTP
 
-### Modification du BookController
+### ⚠️ À FAIRE : Créer l'endpoint GET /books/{id}
 
-Vous devez modifier la méthode `getBooks()` pour :
-- Générer un **ETag** basé sur le contenu des données
-- Supporter l'en-tête `If-None-Match` dans la requête
-- Retourner **304 Not Modified** si l'ETag correspond
-- Retourner **200 OK** avec les données si l'ETag est différent
+**Cet endpoint doit être créé dans `BookController.java` :**
+
+Créez une nouvelle route `GET /books/{id}` pour :
+- Accepter un paramètre de chemin `{id}` pour identifier le livre
+- Accepter un paramètre de header optionnel `If-None-Match`
+- Récupérer le livre avec l'ID spécifié depuis le repository
+- Retourner **404 Not Found** si le livre n'existe pas
+- Générer un **ETag** basé sur le hash du contenu du livre
+- Comparer l'ETag reçu avec l'ETag généré
+- Retourner **304 Not Modified** si les ETags correspondent (sans body)
+- Retourner **200 OK** avec les données et l'ETag si les ETags ne correspondent pas
+
+
+### Modification du BookRepository
+
+Votre repository doit pouvoir :
+- Retourner un livre spécifique par son ID (`findById(long id)`)
+- Retourner `null` si le livre n'existe pas
 
 ---
 
@@ -76,9 +83,10 @@ bash exercice4.sh
 
 ⚠️ Si jamais vous avez des soucis d'exécution des scripts dans l'IDE, vous pouvez utiliser Git Bash ou WSL (sinon bonne chance pour installer bash 😶) 
 
-1. **Comparez la 1ère requête (200 OK) avec la 2ème requête (304 Not Modified)**
-2. **Quelle est la réduction de taille ?** (devrait être ~99% pour un 304)
-3. **Le temps de réponse est-il amélioré ?**
+**Comparez les résultats :**
+1. **1ère requête** : Le serveur retourne **200 OK** avec toutes les données et un header **ETag**
+2. **2ème requête avec If-None-Match** : Le serveur retourne **304 Not Modified** sans body
+3. **Économies** : Quelle est la réduction de la taille du payload ? (devrait être proche de 100% pour la 2ème requête)
 
 ---
 
@@ -86,32 +94,17 @@ bash exercice4.sh
 
 Avant de dire que vous avez terminé, vérifiez :
 
-- [ ] L'endpoint `/books` retourne un en-tête `ETag` dans la réponse
-- [ ] Une requête avec `If-None-Match` correspondant à l'ETag retourne **304 Not Modified**
-- [ ] Une requête avec `If-None-Match` différent retourne **200 OK** avec les données
-- [ ] La réponse 304 ne contient pas de body (taille = 0 bytes)
+- [ ] L'endpoint `GET /books/{id}` existe et est fonctionnel
+- [ ] L'endpoint `GET /books/{id}` retourne un header **ETag**
+- [ ] Les requêtes avec `If-None-Match` reçoivent **304 Not Modified** si l'ETag correspond
+- [ ] La réponse **304** ne contient **aucun body** (payload vide)
+- [ ] Deux requêtes identiques retournent le **même ETag**
+- [ ] Les requêtes avec un **ETag différent** retournent **200 OK** avec les données complètes
+- [ ] Les IDs inexistants retournent **404 Not Found**
+- [ ] La taille du payload est réduite pour les requêtes avec cache valide
 - [ ] Les tests unitaires passent sans erreur
 
 ---
 
-## 🎓 Pour aller plus loin 🔍
-
-Si vous avez le temps, vous pouvez :
-
-1. **Ajouter des directives Cache-Control** pour optimiser davantage :
-   ```
-   Cache-Control: max-age=3600, public
-   ```
-
-2. **Implémenter Last-Modified** en complément de l'ETag :
-   ```
-   Last-Modified: Tue, 14 Jan 2026 10:00:00 GMT
-   If-Modified-Since: Tue, 14 Jan 2026 10:00:00 GMT
-   ```
-
-3. **Combiner avec la pagination et le filtrage** pour maximiser les bénéfices
-
----
-
-Une fois cet exercice fini, vous pouvez vous rendre sur le fichier `Exercice5_Delta.md'`.
+Une fois cet exercice fini, vous pouvez vous rendre sur le fichier `Exercice5_Delta.md`.
 

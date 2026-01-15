@@ -10,8 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,43 +77,34 @@ class BookControllerCompressionTest {
         }
     }
 
-    private int getCompressedResponseSize() throws IOException {
-        URL url = new URL("http://localhost:" + port + "/books?page=0&size=100");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestProperty("Accept-Encoding", "gzip");
-        connection.setRequestMethod("GET");
+    private int getCompressedResponseSize() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newBuilder()
+                .build();
 
-        int compressedSize = 0;
-        try (var is = connection.getInputStream()) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            // Lire directement le flux brut (compressé)
-            while ((bytesRead = is.read(buffer)) != -1) {
-                compressedSize += bytesRead;
-            }
-        } finally {
-            connection.disconnect();
-        }
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/books?page=0&size=100"))
+                .header("Accept-Encoding", "gzip")
+                .GET()
+                .build();
 
-        return compressedSize;
+        HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+
+        // Retourner la taille brute du body compressé
+        return response.body().length;
     }
 
-    private int getUncompressedResponseSize() throws IOException {
-        URL url = new URL("http://localhost:" + port + "/books?page=0&size=100");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
+    private int getUncompressedResponseSize() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newBuilder()
+                .build();
 
-        int uncompressedSize = 0;
-        try (var is = connection.getInputStream()) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                uncompressedSize += bytesRead;
-            }
-        } finally {
-            connection.disconnect();
-        }
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/books?page=0&size=100"))
+                .GET()
+                .build();
 
-        return uncompressedSize;
+        HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+
+        // Retourner la taille du body non-compressé
+        return response.body().length;
     }
 }

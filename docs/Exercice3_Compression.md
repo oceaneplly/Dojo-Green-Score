@@ -6,8 +6,6 @@
 
 Actuellement, l'endpoint `GET /books` de l'API optimisée retourne des données JSON **non compressées**. Cela peut être problématique si :
 - Les réponses contiennent beaucoup de données (même paginées)
-- La bande passante réseau est limitée
-- Le temps de transfert des données est long
 
 Votre mission : **Activer la compression Gzip** pour réduire la taille des données transférées sur le réseau.
 
@@ -57,7 +55,7 @@ Utilisez le script `exercice3.sh` dans le dossier `scripts/` pour mesurer l'impa
 Exécutez-le comme suit :
 
 ```bash
-cd scripts
+cd scripts # si vous n'êtes pas déjà dans ce dossier
 bash exercice3.sh
 ```
 
@@ -78,10 +76,10 @@ Avant de dire que vous avez terminé, vérifiez :
 - [ ] L'en-tête `Content-Encoding: gzip` est présent dans les réponses compressées
 - [ ] La taille du payload est réduite avec la compression
 - [ ] Les requêtes sans `Accept-Encoding: gzip` fonctionnent toujours (non compressé)
-- [ ] La compression ne s'applique que pour les réponses > 1KB
 - [ ] Les tests unitaires passent sans erreur
+- [ ] Le script `exercice3.sh` passe sans erreur et retourne des tailles de payload réduites
 
 ---
 
-Une fois cet exercice fini, vous pouvez vous rendre sur le fichier `Exercice3_Compression.md'`.
+Une fois cet exercice fini, vous pouvez vous rendre sur le fichier `Exercice4_Cache.md'`.
 

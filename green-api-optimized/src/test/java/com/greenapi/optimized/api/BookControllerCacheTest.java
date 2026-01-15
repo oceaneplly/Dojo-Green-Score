@@ -22,22 +22,18 @@ class BookControllerCacheTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("Test 1: GET /books retourne un en-tête ETag")
+    @DisplayName("Test 1: GET /books/{id} retourne un en-tête ETag")
     void testResponseContainsETag() throws Exception {
-        mockMvc.perform(get("/books")
-                .param("page", "0")
-                .param("size", "20"))
+        mockMvc.perform(get("/books/1"))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("ETag"));
     }
 
     @Test
-    @DisplayName("Test 2: GET /books avec If-None-Match correspondant retourne 304 Not Modified")
+    @DisplayName("Test 2: GET /books/{id} avec If-None-Match correspondant retourne 304 Not Modified")
     void testIfNoneMatchReturns304() throws Exception {
         // Première requête pour obtenir l'ETag
-        MvcResult firstRequest = mockMvc.perform(get("/books")
-                .param("page", "0")
-                .param("size", "20"))
+        MvcResult firstRequest = mockMvc.perform(get("/books/1"))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("ETag"))
                 .andReturn();
@@ -45,10 +41,8 @@ class BookControllerCacheTest {
         String etag = firstRequest.getResponse().getHeader("ETag");
 
         // Deuxième requête avec If-None-Match
-        mockMvc.perform(get("/books")
-                .param("page", "0")
-                .param("size", "20")
-                .header("If-None-Match", etag))
+        mockMvc.perform(get("/books/1")
+                        .header("If-None-Match", etag))
                 .andExpect(status().isNotModified())
                 .andExpect(header().string("ETag", etag));
     }
@@ -57,19 +51,15 @@ class BookControllerCacheTest {
     @DisplayName("Test 3: Réponse 304 ne contient pas de body (payload vide)")
     void test304ResponseHasNoBody() throws Exception {
         // Première requête pour obtenir l'ETag
-        MvcResult firstRequest = mockMvc.perform(get("/books")
-                .param("page", "0")
-                .param("size", "20"))
+        MvcResult firstRequest = mockMvc.perform(get("/books/1"))
                 .andReturn();
 
         String etag = firstRequest.getResponse().getHeader("ETag");
         int firstResponseSize = firstRequest.getResponse().getContentAsByteArray().length;
 
         // Deuxième requête avec If-None-Match
-        MvcResult secondRequest = mockMvc.perform(get("/books")
-                .param("page", "0")
-                .param("size", "20")
-                .header("If-None-Match", etag))
+        MvcResult secondRequest = mockMvc.perform(get("/books/1")
+                        .header("If-None-Match", etag))
                 .andExpect(status().isNotModified())
                 .andReturn();
 
@@ -88,18 +78,14 @@ class BookControllerCacheTest {
     @DisplayName("Test 4: Deux requêtes identiques retournent le même ETag")
     void testConsistentETag() throws Exception {
         // Première requête
-        MvcResult firstRequest = mockMvc.perform(get("/books")
-                .param("page", "0")
-                .param("size", "20"))
+        MvcResult firstRequest = mockMvc.perform(get("/books/1"))
                 .andExpect(status().isOk())
                 .andReturn();
 
         String firstETag = firstRequest.getResponse().getHeader("ETag");
 
-        // Deuxième requête avec les mêmes paramètres
-        MvcResult secondRequest = mockMvc.perform(get("/books")
-                .param("page", "0")
-                .param("size", "20"))
+        // Deuxième requête avec le même ID
+        MvcResult secondRequest = mockMvc.perform(get("/books/1"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -109,6 +95,13 @@ class BookControllerCacheTest {
         org.assertj.core.api.Assertions.assertThat(firstETag)
                 .as("Les ETags doivent être identiques pour des requêtes identiques")
                 .isEqualTo(secondETag);
+    }
+
+    @Test
+    @DisplayName("Test 5: GET /books/{id} avec un ID inexistant retourne 404 Not Found")
+    void testNotFoundForInvalidId() throws Exception {
+        mockMvc.perform(get("/books/999999999"))
+                .andExpect(status().isNotFound());
     }
 
 }

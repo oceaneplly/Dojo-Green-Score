@@ -12,7 +12,6 @@ echo ""
 # Paramètres avec valeurs par défaut
 PAGE=${1:-0}
 SIZE=${2:-20}
-APERCU_TAILLE=2000
 
 # Variables
 OPTIMIZED_URL="http://localhost:8081/books?page=$PAGE&size=$SIZE"
@@ -62,10 +61,9 @@ echo " Taille réponse   : $size_response bytes ($size_kb KB)"
 echo ""
 
 # Affichage d'un aperçu de la réponse (premiers 200 caractères)
-echo " Aperçu de la réponse :"
+echo " Réponse :"
 echo "───────────────────────────────────────"
-echo "$response_body" | head -c $APERCU_TAILLE
-echo "..."
+echo "$response_body"
 echo ""
 
 # Nettoyage

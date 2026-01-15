@@ -10,38 +10,26 @@ Cet atelier vous guide à travers l'implémentation de bonnes pratiques dans vos
 
 - **DE11** - Pagination : Limiter le nombre de résultats par requête
 - **DE08** - Filtrage : Réduire les données retournées selon les critères
-- **US01** - Query params : Utiliser les paramètres de requête pour la navigation
 - **DE01/USXX** - Compression (Gzip) : Compresser les réponses HTTP
 - **DE02/DE03** - HTTP Cache (ETag/304) : Implémenter le caching côté client
 - **DE06/US04** - Delta (changes since) : Retourner uniquement les modifications
 - **206** - Partial Content (Range) : Supporter les requêtes partielles
-- **LO01** - Useful logs : Journaliser efficacement sans excès
-- **US07** - Error monitoring : Surveiller les erreurs de manière efficace
 
 ## 🗂️ Structure du projet
 
 ```
 Dojo-Green-Score/
-├── green-api-baseline/          # Implémentation naïve (point de référence)
-│   ├── src/main/java/           # Code source Java
-│   ├── src/main/resources/       # Configuration et ressources
-│   └── pom.xml                  # Dépendances Maven
-│
-├── green-api-optimized/          # Implémentation optimisée
-│   ├── src/main/java/           # Code source Java avec optimisations
-│   ├── src/main/resources/       # Configuration optimisée
-│   └── pom.xml                  # Dépendances Maven
-│
-├── scripts/                      # Scripts pour tester et mesurer
-├── MAPPING.md                   # Mappage des règles Green Score
-├── WORKSHOP.md                  # Guide détaillé de l'atelier
-└── README.md                    # Ce fichier
+├── docs/                    # Documentation des 6 exercices + règles Green Score
+├── green-api-baseline/      # API naïve (point de référence)
+├── green-api-optimized/     # API optimisée avec implémentations
+├── scripts/                 # Scripts bash pour tester et mesurer
+└── README.md                # Ce fichier
 ```
 
 ### Modules principaux
 
-- **`baseline/`**: API basique sans optimisations / sert de point de référence pour mesurer les améliorations
-- **`optimized/`**: API de travail / le but est d'avoir version optimisée avec les règles à implémenter
+- **`green-api-baseline/`**: API basique sans optimisations / sert de point de référence pour mesurer les améliorations
+- **`green-api-optimized/`**: API de travail / le but est d'avoir version optimisée avec les règles à implémenter
 - **`scripts/`**: Contient les scripts `curl` pour comparer les performances **avant/après**
 
 ### Prérequis

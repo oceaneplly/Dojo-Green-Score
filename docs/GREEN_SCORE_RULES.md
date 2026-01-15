@@ -13,7 +13,7 @@ Il y a également des pistes pour les implémenter afin de réduire l'empreinte 
 6. [206 - Partial Content (Range)](#206---partial-content-range)
 
 
-## Autres règles (non présentes dans cet atelier)'
+## Autres règles (non présentes dans cet atelier)
 1. [US01 - Paramètres de requête GET](#us01---paramètres-de-requête-get)
 2. [LO01 - Journalisation utile](#lo01---journalisation-utile)
 3. [US07 - Surveillance des erreurs](#us07---surveillance-des-erreurs)

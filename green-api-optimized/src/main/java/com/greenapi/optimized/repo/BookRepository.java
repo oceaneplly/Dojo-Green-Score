@@ -30,6 +30,19 @@ public class BookRepository {
     }
 
     public List<Book> findAll() { return data; }
+
+    public List<Book> findByPage(int page, int size) {
+        int start = page * size;
+        int end = Math.min(start + size, (int) data.size());
+
+        if (start >= data.size()) {
+            return new ArrayList<>();
+        }
+
+        return data.subList(start, end);
+    }
+
     public Book findById(long id) { return data.stream().filter(b -> b.id()==id).findFirst().orElse(null); }
     public long getBookNumber() { return bookNumber; }
+    public long getTotalElements() { return data.size(); }
 }

@@ -11,7 +11,7 @@ echo ""
 
 # Paramètres avec valeurs par défaut
 PAGE=${1:-0}
-SIZE=${2:-50}
+SIZE=${2:-100}
 APERCU_TAILLE=2000
 OUTPUT_FILE1="/tmp/response_body_exercice4_first.txt"
 OUTPUT_FILE2="/tmp/response_body_exercice4_second.txt"
@@ -44,13 +44,16 @@ echo ""
 echo " Test 1 : Première requête (200 OK avec ETag)"
 echo "───────────────────────────────────────"
 
+HEADERS_FILE="/tmp/headers_exercice4.txt"
+
 response_first=$(curl -w "\nHTTP_CODE:%{http_code}\nTIME:%{time_total}\nSIZE:%{size_download}" \
   -s \
+  -D "$HEADERS_FILE" \
   -o "$OUTPUT_FILE1" \
   "$OPTIMIZED_URL")
 
-# Extraire l'ETag de la réponse
-etag=$(echo "$response_first" | grep -i "ETag:" | head -1 | sed 's/ETag: //i' | tr -d '\r')
+# Extraire l'ETag depuis le fichier des headers
+etag=$(grep -i "^ETag:" "$HEADERS_FILE" | head -1 | sed 's/ETag: //i' | tr -d '\r')
 
 # Récupération des métriques
 http_code_first=$(echo "$response_first" | grep "HTTP_CODE:" | sed 's/HTTP_CODE://')
@@ -83,9 +86,12 @@ if [ -z "$etag" ]; then
     exit 1
 fi
 
+HEADERS_FILE2="/tmp/headers_exercice4_second.txt"
+
 response_second=$(curl -w "\nHTTP_CODE:%{http_code}\nTIME:%{time_total}\nSIZE:%{size_download}" \
     -s \
-    -o "$OUTPUT_FILE1" \
+    -D "$HEADERS_FILE2" \
+    -o "$OUTPUT_FILE2" \
     -H "If-None-Match: $etag" \
     "$OPTIMIZED_URL")
 
@@ -106,7 +112,22 @@ echo "  Temps réponse    : ${time_second}s"
 echo "  Taille réponse   : $size_second bytes ($size_kb_second KB)"
 echo ""
 
-echo "=========================================="
-echo "  Test terminé"
-echo "=========================================="
+# ========================================
+# Comparaison
+# ========================================
+echo " Comparaison :"
+echo "───────────────────────────────────────"
+echo "  1ère requête (200)  : $size_first bytes ($size_kb_first KB)"
+echo "  2ème requête (304)  : $size_second bytes ($size_kb_second KB)"
 
+if [ "$http_code_second" = "304" ]; then
+    echo "  Économies           : $size_first bytes (100% - pas de body 304)"
+    echo "  Compression ETag    : ACTIVE"
+else
+    echo "  Compression ETag    : NON ACTIVE"
+fi
+
+echo ""
+
+# Nettoyage
+rm -f "$OUTPUT_FILE1" "$OUTPUT_FILE2" "$HEADERS_FILE" "$HEADERS_FILE2"

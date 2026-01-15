@@ -63,7 +63,7 @@ class BookControllerCacheTest {
                 .andReturn();
 
         String etag = firstRequest.getResponse().getHeader("ETag");
-        int firstResponseSize = firstRequest.getResponse().getContentLength();
+        int firstResponseSize = firstRequest.getResponse().getContentAsByteArray().length;
 
         // Deuxième requête avec If-None-Match
         MvcResult secondRequest = mockMvc.perform(get("/books")
@@ -77,12 +77,10 @@ class BookControllerCacheTest {
 
         // Vérifier que la réponse 304 ne contient pas de body
         org.assertj.core.api.Assertions.assertThat(secondResponseSize)
-                .as("La réponse 304 ne doit pas contenir de body")
                 .isEqualTo(0);
 
         // Vérifier que la première réponse contenait des données
         org.assertj.core.api.Assertions.assertThat(firstResponseSize)
-                .as("La réponse 200 doit contenir des données")
                 .isGreaterThan(0);
     }
 
@@ -106,7 +104,6 @@ class BookControllerCacheTest {
                 .andReturn();
 
         String secondETag = secondRequest.getResponse().getHeader("ETag");
-
 
         // Les ETags doivent être identiques pour des requêtes identiques
         org.assertj.core.api.Assertions.assertThat(firstETag)

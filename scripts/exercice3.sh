@@ -38,13 +38,18 @@ echo ""
 # ========================================
 # Test : Requête avec compression Gzip
 # ========================================
-echo " Test : Requête avec compression (Accept-Encoding: gzip)"
+echo " Test 1 : Requête avec compression (Accept-Encoding: gzip)"
 echo "───────────────────────────────────────"
+
+# Faire une requête avec -D pour capturer les headers
+HEADERS_FILE="/tmp/headers_exercice3.txt"
+OUTPUT_FILE_COMPRESSED="/tmp/response_body_exercice3_compressed.txt"
 
 response_body=$(curl -w "\nHTTP_CODE:%{http_code}\nTIME:%{time_total}\nSIZE:%{size_download}" \
     -s \
+    -D "$HEADERS_FILE" \
     -H "Accept-Encoding: gzip" \
-    -o "$OUTPUT_FILE" \
+    -o "$OUTPUT_FILE_COMPRESSED" \
     "$OPTIMIZED_URL")
 
 # Récupération des métriques
@@ -52,11 +57,8 @@ http_code=$(echo "$response_body" | grep "HTTP_CODE:" | sed 's/HTTP_CODE://')
 time_response=$(echo "$response_body" | grep "TIME:" | sed 's/TIME://')
 size_response=$(echo "$response_body" | grep "SIZE:" | sed 's/SIZE://')
 
-# Enlever les lignes de métriques du body
-#response_body=$(echo "$response_body" | grep -v "HTTP_CODE:" | grep -v "TIME:" | grep -v "SIZE:")
-
-# Vérifier si Content-Encoding: gzip est présent
-content_encoding=$(curl -s -I -H "Accept-Encoding: gzip" "$OPTIMIZED_URL" | grep -i "Content-Encoding" | tr -d '\r')
+# Vérifier si Content-Encoding: gzip est présent dans les headers captés
+content_encoding=$(grep -i "Content-Encoding" "$HEADERS_FILE" | tr -d '\r' | sed 's/^[[:space:]]*//g')
 
 if [ -n "$size_response" ] && [ "$size_response" -gt 0 ] 2>/dev/null; then
     size_kb=$((size_response / 1024))
@@ -67,16 +69,69 @@ fi
 echo "  Code HTTP        : $http_code"
 echo "  Temps réponse    : ${time_response}s"
 echo "  Taille réponse   : $size_response bytes ($size_kb KB)"
-echo "  Content-Encoding : $content_encoding"
+echo "  $content_encoding"
 echo ""
 
-## Aperçu de la réponse
-#echo " Aperçu de la réponse :"
-#echo "───────────────────────────────────────"
-#echo "$response_body" | head -c $APERCU_TAILLE
-#echo "..."
-#echo ""
+# Affichage du contenu compressé (binaire)
+echo " Contenu compressé (binaire) :"
+echo "───────────────────────────────────────"
+# Afficher les premiers bytes en hexadécimal
+od -A x -t x1z -v "$OUTPUT_FILE_COMPRESSED" | head -20
+echo "..."
+echo ""
 
+# ========================================
+# Test 2 : Requête sans compression
+# ========================================
+echo " Test 2 : Requête sans compression (lisible)"
+echo "───────────────────────────────────────"
+
+OUTPUT_FILE_UNCOMPRESSED="/tmp/response_body_exercice3_uncompressed.txt"
+
+response_body_2=$(curl -w "\nHTTP_CODE:%{http_code}\nTIME:%{time_total}\nSIZE:%{size_download}" \
+    -s \
+    -o "$OUTPUT_FILE_UNCOMPRESSED" \
+    "$OPTIMIZED_URL")
+
+# Récupération des métriques
+http_code_2=$(echo "$response_body_2" | grep "HTTP_CODE:" | sed 's/HTTP_CODE://')
+time_response_2=$(echo "$response_body_2" | grep "TIME:" | sed 's/TIME://')
+size_response_2=$(echo "$response_body_2" | grep "SIZE:" | sed 's/SIZE://')
+
+if [ -n "$size_response_2" ] && [ "$size_response_2" -gt 0 ] 2>/dev/null; then
+    size_kb_2=$((size_response_2 / 1024))
+else
+    size_kb_2=0
+fi
+
+echo "  Code HTTP        : $http_code_2"
+echo "  Temps réponse    : ${time_response_2}s"
+echo "  Taille réponse   : $size_response_2 bytes ($size_kb_2 KB)"
+echo ""
+
+# Aperçu de la réponse JSON lisible
+echo " Contenu décompressé (JSON lisible) :"
+echo "───────────────────────────────────────"
+cat "$OUTPUT_FILE_UNCOMPRESSED"
+echo ""
+
+# ========================================
+# Comparaison de la compression
+# ========================================
+echo " Comparaison de la compression :"
+echo "───────────────────────────────────────"
+echo "  Taille compressée   : $size_response bytes ($size_kb KB)"
+echo "  Taille non-compressée : $size_response_2 bytes ($size_kb_2 KB)"
+
+if [ "$size_response_2" -gt 0 ] 2>/dev/null; then
+    compression_ratio=$((100 * (size_response_2 - size_response) / size_response_2))
+    echo "  Ratio de compression : $compression_ratio %"
+fi
+
+echo ""
+
+# Nettoyage
+rm -f "$OUTPUT_FILE_COMPRESSED" "$OUTPUT_FILE_UNCOMPRESSED" "$HEADERS_FILE"
 
 echo "=========================================="
 echo "  Test terminé"

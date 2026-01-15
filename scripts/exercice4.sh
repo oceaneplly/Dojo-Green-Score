@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Script de test pour l'exercice 4 - DE02/DE03 HTTP Cache (ETag/304)
-# Usage: ./exercice4.sh [page] [size]
-# Exemple: ./exercice4.sh 0 50
+# Usage: ./exercice4.sh [book-id]
+# Exemple: ./exercice4.sh 1
 
 echo "=========================================="
 echo "  Exercice 4 - DE02/DE03 HTTP Cache"
@@ -10,17 +10,16 @@ echo "=========================================="
 echo ""
 
 # Paramètres avec valeurs par défaut
-PAGE=${1:-0}
-SIZE=${2:-100}
+BOOK_ID=${1:-1}
 APERCU_TAILLE=2000
 OUTPUT_FILE1="/tmp/response_body_exercice4_first.txt"
 OUTPUT_FILE2="/tmp/response_body_exercice4_second.txt"
 
 # Variables
-OPTIMIZED_URL="http://localhost:8081/books?page=$PAGE&size=$SIZE"
+OPTIMIZED_URL="http://localhost:8081/books/$BOOK_ID"
 
 echo "  URL testée : $OPTIMIZED_URL"
-echo "   (Page: $PAGE, Size: $SIZE)"
+echo "   (Book ID: $BOOK_ID)"
 echo ""
 
 # Vérifier si l'application est accessible

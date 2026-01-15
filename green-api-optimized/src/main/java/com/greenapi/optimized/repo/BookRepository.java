@@ -42,7 +42,13 @@ public class BookRepository {
         return data.subList(start, end);
     }
 
-    public Book findById(long id) { return data.stream().filter(b -> b.id()==id).findFirst().orElse(null); }
+    public List<Book> findByLastModifiedAfter(long timestamp) {
+        return data.stream()
+                .filter(book -> book.getLastModified() > timestamp)
+                .toList();
+    }
+
+    public Book findById(long id) { return data.stream().filter(b -> b.getId() == id).findFirst().orElse(null); }
     public long getBookNumber() { return bookNumber; }
     public long getTotalElements() { return data.size(); }
 }

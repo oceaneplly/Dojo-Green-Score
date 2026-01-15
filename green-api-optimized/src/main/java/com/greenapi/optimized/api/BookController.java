@@ -26,8 +26,7 @@ public class BookController {
     public ResponseEntity<?> getBooks(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = DEFAULT_SIZE_STR) int size,
-            @RequestParam(required = false) String fields,
-            @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
+            @RequestParam(required = false) String fields) {
 
         // Validation
         if (page < 0) {
@@ -41,19 +40,31 @@ public class BookController {
         long totalElements = repo.getTotalElements();
         long totalPages = (totalElements + size - 1) / size;
 
-        // Créer la réponse
-        Object responseBody;
+        // Si le paramètre fields est présent, retourner une réponse filtrée
         if (fields != null && !fields.isEmpty()) {
             List<BookDTO> filteredContent = content.stream()
                     .map(book -> new BookDTO(book, fields))
                     .collect(Collectors.toList());
-            responseBody = new FilteredPaginatedResponse(filteredContent, page, size, totalElements, totalPages);
-        } else {
-            responseBody = new PaginatedResponse(content, page, size, totalElements, totalPages);
+            return ResponseEntity.ok(new FilteredPaginatedResponse(filteredContent, page, size, totalElements, totalPages));
         }
 
-        // Générer un ETag simple basé sur le hash du contenu
-        String eTag = "\"" + Integer.toHexString(responseBody.toString().hashCode()) + "\"";
+        // Sinon, retourner la réponse paginée complète
+        return ResponseEntity.ok(new PaginatedResponse(content, page, size, totalElements, totalPages));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(
+            @PathVariable long id,
+            @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
+
+        Book book = repo.findById(id);
+
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Générer un ETag basé sur le hash du contenu du livre
+        String eTag = "\"" + Integer.toHexString(book.toString().hashCode()) + "\"";
 
         // Si l'ETag correspond, retourner 304 Not Modified
         if (ifNoneMatch != null && ifNoneMatch.equals(eTag)) {
@@ -65,7 +76,46 @@ public class BookController {
         // Sinon, retourner 200 OK avec les données et l'ETag
         return ResponseEntity.ok()
                 .header("ETag", eTag)
-                .body(responseBody);
+                .body(book);
+    }
+
+    @GetMapping("/delta")
+    public ResponseEntity<?> getDelta(@RequestParam(required = true) Long timestamp) {
+        // Récupérer tous les livres modifiés après le timestamp
+        List<Book> modifiedBooks = repo.findByLastModifiedAfter(timestamp);
+
+        return ResponseEntity.ok().body(modifiedBooks);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateBook(@PathVariable long id, @RequestBody BookUpdateRequest request) {
+        Book book = repo.findById(id);
+
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Mettre à jour les champs qui sont fournis dans la requête
+        if (request.getTitle() != null) {
+            book.setTitle(request.getTitle());
+        }
+        if (request.getAuthor() != null) {
+            book.setAuthor(request.getAuthor());
+        }
+        if (request.getPublished_date() != null) {
+            book.setPublished_date(request.getPublished_date());
+        }
+        if (request.getPages() != null) {
+            book.setPages(request.getPages());
+        }
+        if (request.getSummary() != null) {
+            book.setSummary(request.getSummary());
+        }
+
+        book.setLastModified(System.currentTimeMillis());
+
+
+        return ResponseEntity.ok().body(book);
     }
 
 }

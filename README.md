@@ -13,7 +13,6 @@ Cet atelier vous guide à travers l'implémentation de bonnes pratiques dans vos
 - **DE01/USXX** - Compression (Gzip) : Compresser les réponses HTTP
 - **DE02/DE03** - HTTP Cache (ETag/304) : Implémenter le caching côté client
 - **DE06/US04** - Delta (changes since) : Retourner uniquement les modifications
-- **206** - Partial Content (Range) : Supporter les requêtes partielles
 
 ## 🗂️ Structure du projet
 

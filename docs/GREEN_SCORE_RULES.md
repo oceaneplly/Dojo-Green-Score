@@ -10,7 +10,6 @@ Il y a également des pistes pour les implémenter afin de réduire l'empreinte 
 3. [DE01/USXX - Compression Gzip](#de01usxx---compression-gzip)
 4. [DE02/DE03 - HTTP Cache (ETag/304)](#de02de03---http-cache-etag304)
 5. [DE06/US04 - Delta (changes since)](#de06us04---delta-changes-since)
-6. [206 - Partial Content (Range)](#206---partial-content-range)
 
 
 ## Autres règles (non présentes dans cet atelier)
@@ -18,6 +17,7 @@ Il y a également des pistes pour les implémenter afin de réduire l'empreinte 
 2. [LO01 - Journalisation utile](#lo01---journalisation-utile)
 3. [US07 - Surveillance des erreurs](#us07---surveillance-des-erreurs)
 4. [AR02 - Proximité et efficacité](#ar02---proximité-et-efficacité)
+5. [206 - Partial Content (Range)](#206---partial-content-range)
 ---
 
 ## DE11 - Pagination
@@ -152,46 +152,41 @@ Retourner uniquement les données modifiées depuis une date donnée, au lieu de
 - Réduction de la latence : Moins de données à traiter
 - Économie de bande passante : Seulement ce qui a changé
 
----
-
-## 206 - Partial Content (Range)
-
-### 🎯 Objectif
-Permettre aux clients de télécharger uniquement une partie du contenu en utilisant l'en-tête `Range`.
-
-### 📊 Impact environnemental
-- Réduction de la bande passante : Télécharger par morceaux
-- Reprise de téléchargement : Redémarrer à partir du dernier octet téléchargé
-- Économie sur mobile : Réseaux mobiles instables bénéficient des téléchargements partiels
-- Parallélisation : Plusieurs connexions simultanées
-
 ### 📋 Implémentation
 
 **Pattern de requête :**
 ```
-Request:
-GET /documents/large-file.pdf HTTP/1.1
-Range: bytes=0-1023
-
-Response (206 Partial Content):
-HTTP/1.1 206 Partial Content
-Content-Range: bytes 0-1023/10485760
-Content-Length: 1024
-Accept-Ranges: bytes
-
-[données du fichier]
+GET /books/changes?since=2024-01-01T00:00:00Z
+GET /books/delta?from=2024-01-01&to=2024-01-31
+GET /books?modifiedSince=2024-01-01T00:00:00Z
 ```
 
-**Requête suivante :**
+**Réponse exemple :**
+```json
+{
+  "changes": [
+    {
+      "id": 123,
+      "action": "created",
+      "timestamp": "2024-01-15T10:30:00Z",
+      "book": { "id": 123, "title": "New Book" }
+    },
+    {
+      "id": 456,
+      "action": "updated",
+      "timestamp": "2024-01-15T11:45:00Z",
+      "book": { "id": 456, "title": "Updated Title" }
+    },
+    {
+      "id": 789,
+      "action": "deleted",
+      "timestamp": "2024-01-15T12:00:00Z"
+    }
+  ],
+  "lastModified": "2024-01-15T12:00:00Z"
+}
 ```
-Request:
-Range: bytes=1024-2047
 
-Response:
-HTTP/1.1 206 Partial Content
-Content-Range: bytes 1024-2047/10485760
-Content-Length: 1024
-```
 ---
 
 ## 📚 Règles supplémentaires
@@ -319,3 +314,42 @@ Optimiser la proximité des données et l'efficacité des requêtes pour réduir
 4. **Caching en mémoire** : Cache les données fréquemment accédées
 
 ---
+
+## 206 - Partial Content (Range)
+
+### 🎯 Objectif
+Permettre aux clients de télécharger uniquement une partie du contenu en utilisant l'en-tête `Range`.
+
+### 📊 Impact environnemental
+- Réduction de la bande passante : Télécharger par morceaux
+- Reprise de téléchargement : Redémarrer à partir du dernier octet téléchargé
+- Économie sur mobile : Réseaux mobiles instables bénéficient des téléchargements partiels
+- Parallélisation : Plusieurs connexions simultanées
+
+### 📋 Implémentation
+
+**Pattern de requête :**
+```
+Request:
+GET /documents/large-file.pdf HTTP/1.1
+Range: bytes=0-1023
+
+Response (206 Partial Content):
+HTTP/1.1 206 Partial Content
+Content-Range: bytes 0-1023/10485760
+Content-Length: 1024
+Accept-Ranges: bytes
+
+[données du fichier]
+```
+
+**Requête suivante :**
+```
+Request:
+Range: bytes=1024-2047
+
+Response:
+HTTP/1.1 206 Partial Content
+Content-Range: bytes 1024-2047/10485760
+Content-Length: 1024
+```

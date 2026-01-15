@@ -94,24 +94,5 @@ Avant de dire que vous avez terminé, vérifiez :
 
 ---
 
-## 🎓 Pour aller plus loin 🔍
-
-Si vous avez le temps, vous pouvez :
-
-1. **Ajouter des directives Cache-Control** pour optimiser davantage :
-   ```
-   Cache-Control: max-age=3600, public
-   ```
-
-2. **Implémenter Last-Modified** en complément de l'ETag :
-   ```
-   Last-Modified: Tue, 14 Jan 2026 10:00:00 GMT
-   If-Modified-Since: Tue, 14 Jan 2026 10:00:00 GMT
-   ```
-
-3. **Combiner avec la pagination et le filtrage** pour maximiser les bénéfices
-
----
-
 Une fois cet exercice fini, vous pouvez vous rendre sur le fichier `Exercice5_Delta.md'`.
 

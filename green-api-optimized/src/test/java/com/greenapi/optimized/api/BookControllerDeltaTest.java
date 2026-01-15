@@ -35,7 +35,7 @@ class BookControllerDeltaTest {
 
         // Vérifier que la réponse contient des livres avec lastModified
         org.assertj.core.api.Assertions.assertThat(responseBody)
-                .contains("\"content\"", "last_modified");
+                .contains("\"content\"", "lastModified");
     }
 
     @Test
@@ -73,7 +73,7 @@ class BookControllerDeltaTest {
 
         // Avec un ancien timestamp, on doit avoir tous les livres (tous créés après)
         org.assertj.core.api.Assertions.assertThat(responseBody)
-                .contains("last_modified");
+                .contains("lastModified");
     }
 
     @Test

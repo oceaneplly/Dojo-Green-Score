@@ -39,8 +39,8 @@ class BookControllerPaginationTest {
 
     @Test
     @DisplayName("Test 2: GET /books?page=0&size=500000 lève IllegalArgumentException")
-    void testMaxSizeValidation() throws Exception {
-        assertThrows(Exception.class, () -> {
+    void testMaxSizeValidation() throws IllegalArgumentException {
+        assertThrows(IllegalArgumentException.class, () -> {
             mockMvc.perform(get("/books")
                     .param("page", "0")
                     .param("size", "500000"));
@@ -49,8 +49,8 @@ class BookControllerPaginationTest {
 
     @Test
     @DisplayName("Test 3: GET /books?page=-1 lève IllegalArgumentException")
-    void testNegativePageValidation() throws Exception {
-        assertThrows(Exception.class, () -> {
+    void testNegativePageValidation() throws IllegalArgumentException {
+        assertThrows(IllegalArgumentException.class, () -> {
             mockMvc.perform(get("/books")
                     .param("page", "-1")
                     .param("size", "10"));

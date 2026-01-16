@@ -100,7 +100,7 @@ Le script `basicCase.sh` lance une commande curl sur l'API baseline (http://loca
 ## 📊 Mesurer les améliorations
 
 Les scripts fournis dans le dossier `scripts/` vous permettent de :
-- Mesurer le temps de réponse, la taille du paylod et avoir le code HTTP pour chaque règle implémentée
+- Mesurer le temps de réponse, la taille du payload et avoir le code HTTP pour chaque règle implémentée
 - Comparer les résultats avec le premier script `basicCase.sh` (API baseline) et les scripts des exercices (API optimisée)
 
 Vous pouvez vous rendre sur le fichier `Exercice1_Pagination.md` pour faire le premier exercice de l'atelier. 

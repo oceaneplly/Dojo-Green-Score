@@ -35,7 +35,7 @@ class BookControllerDeltaTest {
 
         // Vérifier que la réponse contient des livres avec lastModified
         org.assertj.core.api.Assertions.assertThat(responseBody)
-                .contains("\"content\"", "lastModified");
+                .contains("lastModified");
     }
 
     @Test

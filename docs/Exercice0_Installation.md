@@ -1,6 +1,6 @@
 ## 🚀 Instructions de démarrage
 
-Vous pouvez lancer le projet via le terminal de commandes ou via votre IDE;
+Vous pouvez lancer le projet via le terminal de commandes ou directement dans votre IDE.
 Ces deux méthodes sont décrites ci-dessous.
 
 ### 1.1 Lancement des applications via le terminal
@@ -11,7 +11,7 @@ Vous pouvez le faire en lançant cette commande :
 java --version
 ```
 
-Si vous ne pouvez pas changer votre JAVA_HOME globalement, vous pouvez configurer Maven pour utiliser une version spécifique de Java en définissant la variable d'environnement avant d'exécuter Maven :
+Si vous ne pouvez pas changer votre JAVA_HOME globalement, vous pouvez lancer une version spécifique de Java en définissant la variable d'environnement dans un terminal (dans l'IDE de préférence) :
 
 ```bash
 # Windows (PowerShell)
@@ -28,7 +28,7 @@ cd green-api-baseline
 mvn clean install
 mvn spring-boot:run
 ```
-L'API sera disponible sur `http://localhost:8080`
+L'API sera disponible sur `http://localhost:8080/books`
 
 **Terminal 2 - Lancer l'API optimisée**
 ```bash
@@ -36,7 +36,7 @@ cd green-api-optimized
 mvn clean install -DskipTests
 mvn spring-boot:run
 ```
-L'API sera disponible sur `http://localhost:8081`
+L'API sera disponible sur `http://localhost:8081/books`
 
 
 ## 1.2 Lancement via l'IDE des applications
@@ -73,16 +73,19 @@ Avant de lancer les applications, vous devez builder les projets :
 1. Naviguez vers `green-api-baseline/src/main/java/com/greenapi/baseline/BaselineApplication.java`
 2. Clic droit sur la classe `BaselineApplication`
 3. Sélectionnez `Run 'BaselineApplication'`
-4. L'API sera disponible sur `http://localhost:8080`
+4. L'API sera disponible sur `http://localhost:8080/books`
 
 ### Lancer l'application optimisée
 
 1. Naviguez vers `green-api-optimized/src/main/java/com/greenapi/optimized/OptimizedApplication.java`
 2. Clic droit sur la classe `OptimizedApplication`
 3. Sélectionnez `Run 'OptimizedApplication'`
-4. L'API sera disponible sur `http://localhost:8081`
+4. L'API sera disponible sur `http://localhost:8081/books`
 
-
+---
+⚠ Si vous voulez regarder si vos applications fonctionnent, il est conseillé de faire ça directement sur un navigateur.
+Bruno n'aime pas trop les grosses requêtes 🤔 
+---
 ## 2. Lancement des scripts de mesure 
 
 Lancez un terminal supplémentaire pour exécuter les scripts: 
@@ -90,13 +93,14 @@ Lancez un terminal supplémentaire pour exécuter les scripts:
 cd scripts
 bash basicCase.sh
 ```
+Le script `basicCase.sh` lance une commande curl sur l'API baseline (http://localhost:8080/books) et affiche le code HTTP, le temps de réponse et la taille du payload.
 
-⚠ Si vous avez des soucis avec `bash`, vous pouvez lancer ces commandes sur GitBash.
+⚠ Si vous avez des soucis avec `bash`, vous pouvez lancer les différents scripts sur Gitbash.
 
 ## 📊 Mesurer les améliorations
 
 Les scripts fournis dans le dossier `scripts/` vous permettent de :
-- Comparer le temps de réponse entre la version baseline et optimisée pour chaque exercice
-- Mesurer la taille des payloads
+- Mesurer le temps de réponse, la taille du payload et avoir le code HTTP pour chaque règle implémentée
+- Comparer les résultats avec le premier script `basicCase.sh` (API baseline) et les scripts des exercices (API optimisée)
 
 Vous pouvez vous rendre sur le fichier `Exercice1_Pagination.md` pour faire le premier exercice de l'atelier. 

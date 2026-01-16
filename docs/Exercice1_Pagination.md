@@ -7,7 +7,6 @@
 Actuellement, l'endpoint `GET /books` de l'API optimisée retourne **tous** les livres de la base de données. Cela peut être problématique si :
 - La base contient beaucoup de livres (500,000 dans cet exemple, sacrée bibliothèque🤓)
 - Les données transférées deviennent massives (plusieurs MB)
-- Le serveur consomme beaucoup de RAM pour charger toutes les données
 
 Votre mission : **Implémenter la pagination** pour limiter le nombre de résultats par requête.
 Toutes les implémentations devront être dans le module `green-api-optimized`. 
@@ -30,7 +29,7 @@ Toutes les implémentations devront être dans le module `green-api-optimized`.
 
 ### Modification du BookController
 
-Vous devez modifier la méthode `getBooks()` pour :
+Vous devez ajouter la méthode `getBooks()` pour :
 - Accepter deux paramètres de requête : `page` et `size`
 - Ajouter les validations appropriées 
 - Retourner les résultats paginés
@@ -71,7 +70,7 @@ bash exercice1.sh
 
 ⚠️ Si jamais vous avez des soucis d'exécution des scripts dans l'IDE, vous pouvez utiliser Git Bash ou WSL (sinon bonne chance pour installer bash 😶) 
 
-1. **Que pensez-vous de ses résultats ?**
+**Que pensez-vous de ses résultats ?**
 
 ## ✅ Checklist de validation
 
@@ -79,11 +78,11 @@ Avant de dire que vous avez terminé, vérifiez :
 
 - [ ] L'endpoint `/books` accepte les paramètres `page` et `size`
 - [ ] Une pagination par défaut (page=0, size=20) fonctionne
-- [ ] Les métadonnées de pagination sont retournées (totalElements, totalPages, etc.)
-- [ ] La taille du payload est réduite par rapport à la baseline (min 50%)
+- [ ] La taille du payload est réduite par rapport à la baseline 
 - [ ] Le temps de réponse est amélioré
 - [ ] Les paramètres invalides sont validés (size > 100 rejeté, etc.)
-- [ ] Les tests `curl` passent sans erreur
+- [ ] Le script `exercice1.sh` passe sans erreur et retour une liste paginée 
+- [ ] **Optionnel** : Les métadonnées de pagination sont retournées (totalElements, totalPages, etc.)
 
 ---
 

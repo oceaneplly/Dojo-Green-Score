@@ -29,7 +29,7 @@ Toutes les implémentations devront être dans le module `green-api-optimized`.
 
 ### Modification du BookController
 
-Vous devez modifier la méthode `getBooks()` pour :
+Vous devez ajouter la méthode `getBooks()` pour :
 - Accepter deux paramètres de requête : `page` et `size`
 - Ajouter les validations appropriées 
 - Retourner les résultats paginés

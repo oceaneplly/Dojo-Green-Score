@@ -8,7 +8,7 @@ Avant de lancer les différentes applications, assurez-vous d'avoir la bonne ver
 Vous pouvez le faire en lançant cette commande :
 
 ```bash
-java --version
+java -version
 ```
 
 Si vous ne pouvez pas changer votre JAVA_HOME globalement, vous pouvez lancer une version spécifique de Java en définissant la variable d'environnement dans un terminal (dans l'IDE de préférence) :
